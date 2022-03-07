@@ -3,6 +3,8 @@
 
 #include "KingdomFallsCharacter.h"
 
+
+#include "GASGameplayAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -28,13 +30,30 @@ AKingdomFallsCharacter::AKingdomFallsCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0,600,0);
 	GetCharacterMovement()->AirControl = 0.0f;
+
+	//Ability Stuff
+	PlayerAbilitySystemComponent = CreateDefaultSubobject<UGASAbilitySystemComponent>("AbilitySystemComp");
+		//Save this when loading levels
+	PlayerAttributes = CreateDefaultSubobject<UGASAttributeSet>("Attributes");
 }
 
 // Called when the game starts or when spawned
 void AKingdomFallsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	PlayerAbilitySystemComponent->InitAbilityActorInfo(this,this);
 	
+	InitializeAttributes();
+	GiveAbilities();
+
+	if(PlayerAbilitySystemComponent && InputComponent)
+	{
+		const FGameplayAbilityInputBinds Binds("Confirm","Cancel","EGASAbilityInputID",
+			static_cast<int32>(EGASAbilityInputID::Confirm),
+			static_cast<int32>(EGASAbilityInputID::Cancel));
+
+		PlayerAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,Binds);
+	}
 }
 
 // Called every frame
@@ -53,8 +72,51 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis(TEXT("LookRight"),this, &AKingdomFallsCharacter::LookRightYawInput);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"),this, &AKingdomFallsCharacter::LookUpPitchInput);
 	PlayerInputComponent->BindAction(TEXT("Dodge"),IE_Pressed,this,&AKingdomFallsCharacter::Dodge);
+	
+	if(PlayerAbilitySystemComponent && InputComponent)
+	{
+		const FGameplayAbilityInputBinds Binds("Confirm","Cancel","EGASAbilityInputID",
+            static_cast<int32>(EGASAbilityInputID::Confirm),
+            static_cast<int32>(EGASAbilityInputID::Cancel));
+
+		PlayerAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,Binds);
+	}
 }
 
+UAbilitySystemComponent* AKingdomFallsCharacter::GetAbilitySystemComponent() const
+{
+	return PlayerAbilitySystemComponent;
+}
+
+void AKingdomFallsCharacter::InitializeAttributes()
+{
+	if(PlayerAbilitySystemComponent && DefaultAttributeEffect)
+	{
+		FGameplayEffectContextHandle EffectContext = PlayerAbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		FGameplayEffectSpecHandle SpecHandle = PlayerAbilitySystemComponent->MakeOutgoingSpec(DefaultAttributeEffect,1,EffectContext);
+
+		if(SpecHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle GEHandle = PlayerAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		}
+	}
+}
+
+void AKingdomFallsCharacter::GiveAbilities()
+{
+	if(PlayerAbilitySystemComponent)
+	{
+		for(TSubclassOf<UGASGameplayAbility>& StartupAbility : DefaultAbilities)
+		{
+			PlayerAbilitySystemComponent->GiveAbility(
+				FGameplayAbilitySpec(StartupAbility,1,static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID),this));
+		}
+	}
+}
+
+//******************************************INPUTS***************************************************
 void AKingdomFallsCharacter::MoveForward(float axisValue)
 {
 	FVector ForwardDir = GetControlRotation().Vector();
@@ -79,4 +141,5 @@ void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 void AKingdomFallsCharacter::Dodge()
 {
 	//Add dodge mechanic here
+	
 }

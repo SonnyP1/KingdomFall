@@ -7,11 +7,15 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "AbilitySystemInterface.h"
+#include "GASAbilitySystemComponent.h"
+#include "GASAttributeSet.h"
+#include "GameplayEffectTypes.h"
 
 #include "KingdomFallsCharacter.generated.h"
 
 UCLASS()
-class KINGDOMFALLS_API AKingdomFallsCharacter : public ACharacter
+class KINGDOMFALLS_API AKingdomFallsCharacter : public ACharacter , public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -28,10 +32,26 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//Components
+		//Camera Comps
 	UPROPERTY(BlueprintReadWrite)
 	USpringArmComponent * PlayerEyeSpringArm;
 	UCameraComponent* PlayerEye;
+		//Abilities Comps
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="AbilitySystem")
+	class UGASAbilitySystemComponent * PlayerAbilitySystemComponent;
+	UPROPERTY()
+	class UGASAttributeSet * PlayerAttributes;
+	virtual class UAbilitySystemComponent * GetAbilitySystemComponent() const override;
 
+	virtual void InitializeAttributes();
+	virtual void GiveAbilities();
+
+		//Default AAttributes eg: Hitpoints , Stamina , Mana
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Gameplay Effects")
+	TSubclassOf<class UGameplayEffect> DefaultAttributeEffect;
+		//Default Abilities
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Gameplay Abilities")
+	TArray<TSubclassOf<class UGASGameplayAbility>> DefaultAbilities;
 
 
 protected:
