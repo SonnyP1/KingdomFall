@@ -52,6 +52,7 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"),this, &AKingdomFallsCharacter::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("LookRight"),this, &AKingdomFallsCharacter::LookRightYawInput);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"),this, &AKingdomFallsCharacter::LookUpPitchInput);
+	PlayerInputComponent->BindAction(TEXT("Dodge"),IE_Pressed,this,&AKingdomFallsCharacter::Dodge);
 }
 
 void AKingdomFallsCharacter::MoveForward(float axisValue)
@@ -73,4 +74,9 @@ void AKingdomFallsCharacter::LookRightYawInput(float axisValue)
 void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 {
 	AddControllerPitchInput(axisValue);
+}
+
+void AKingdomFallsCharacter::Dodge()
+{
+	//Add dodge mechanic here
 }

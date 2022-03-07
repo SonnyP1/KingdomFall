@@ -40,4 +40,5 @@ protected:
 	void MoveRight(float axisValue);
 	void LookRightYawInput(float axisValue);
 	void LookUpPitchInput(float axisValue);
+	void Dodge();
 };
