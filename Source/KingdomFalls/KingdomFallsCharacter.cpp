@@ -18,7 +18,8 @@ AKingdomFallsCharacter::AKingdomFallsCharacter()
 	//Spring Arm Stuff
 	PlayerEyeSpringArm = CreateDefaultSubobject<USpringArmComponent>("PlayerEyeSpringArm");
 	PlayerEyeSpringArm->SetupAttachment(GetRootComponent());
-	PlayerEyeSpringArm->TargetArmLength = 300.0f;
+	PlayerEyeSpringArm->TargetArmLength = 400.0f;
+	PlayerEyeSpringArm->TargetOffset = FVector(0,0,50);
 	PlayerEyeSpringArm->bUsePawnControlRotation = true;
 
 	//Camera
@@ -72,6 +73,7 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"),this, &AKingdomFallsCharacter::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("LookRight"),this, &AKingdomFallsCharacter::LookRightYawInput);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"),this, &AKingdomFallsCharacter::LookUpPitchInput);
+	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Released,this,&AKingdomFallsCharacter::SprintReleased);
 	
 	if(PlayerAbilitySystemComponent && InputComponent)
 	{
@@ -136,4 +138,9 @@ void AKingdomFallsCharacter::LookRightYawInput(float axisValue)
 void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 {
 	AddControllerPitchInput(axisValue);
+}
+
+void AKingdomFallsCharacter::SprintReleased()
+{
+	CancelSprint();
 }

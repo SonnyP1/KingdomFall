@@ -7,11 +7,14 @@
   <component name="ChangeListManager">
     <list default="true" id="3818fb4d-71ef-4a3f-b9ac-89734a4ead56" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.KingdomFalls/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.KingdomFalls/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultInput.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultInput.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/StarterContent/ThirdPerson/Mannequin/Animations/ThirdPerson_AnimBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/ThirdPerson/Mannequin/Animations/ThirdPerson_AnimBP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/ThirdPerson/Mannequin/Animations/ThirdPerson_IdleRun_2D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/ThirdPerson/Mannequin/Animations/ThirdPerson_IdleRun_2D.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_KingdomFalls/Blueprints/MainCharacter/BP_KingdomFallsCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_KingdomFalls/Blueprints/MainCharacter/BP_KingdomFallsCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_KingdomFalls/Blueprints/MainCharacter/CharacterAbilities/GA_Attack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_KingdomFalls/Blueprints/MainCharacter/CharacterAbilities/GA_Attack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/_KingdomFalls/Blueprints/MainCharacter/CharacterAbilities/GA_Dodge.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_KingdomFalls/Blueprints/MainCharacter/CharacterAbilities/GA_Dodge.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_KingdomFalls/Maps/CastleMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_KingdomFalls/Maps/CastleMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.h" afterDir="false" />
@@ -34,7 +37,12 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://C:/Program Files/Epic Games/UE_4.27/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://C:/Program Files/Epic Games/UE_4.27/Engine/Source/Runtime/GameplayTags/Classes/GameplayTagsManager.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://C:/Program Files/Epic Games/UE_4.27/Engine/Source/Runtime/GameplayTags/Classes/GameplayTagContainer.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/GASGameplayAbility.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
@@ -43,10 +51,10 @@
       <option value="$PROJECT_DIR$/Source/KingdomFalls/GASGameplayAbility.h" />
       <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.Build.cs" />
       <option value="$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.cpp" />
-      <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.cpp" />
-      <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.h" />
-      <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" />
       <option value="$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" />
+      <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" />
+      <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.h" />
+      <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="25wKW9tO5CaY8sir3aC6oiBBb6V" />
@@ -389,6 +397,8 @@
       <workItem from="1646689682807" duration="1402000" />
       <workItem from="1646691233996" duration="1693000" />
       <workItem from="1646936157718" duration="8662000" />
+      <workItem from="1646972923608" duration="961000" />
+      <workItem from="1646975381627" duration="5529000" />
     </task>
     <servers />
   </component>
