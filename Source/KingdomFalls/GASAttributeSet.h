@@ -24,16 +24,36 @@ class KINGDOMFALLS_API UGASAttributeSet : public UAttributeSet
 public:
 	UGASAttributeSet();
 	
+	//HitPoints
 	UPROPERTY(BlueprintReadOnly, Category="Attributes")
 	FGameplayAttributeData HitPoints;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet,HitPoints);
+
+	UPROPERTY(BlueprintReadOnly, Category="Attributes")
+	FGameplayAttributeData MaxHitPoints;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet,MaxHitPoints);
 	
+	//Stamina
 	UPROPERTY(BlueprintReadOnly, Category="Attributes")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet,Stamina);
-	
+
+	UPROPERTY(BlueprintReadOnly, Category="Attributes")
+	FGameplayAttributeData MaxStamina;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet,MaxStamina);
+
+	//Mana
 	UPROPERTY(BlueprintReadOnly, Category="Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet,Mana);
+
+	UPROPERTY(BlueprintReadOnly, Category="Attributes")
+	FGameplayAttributeData MaxMana;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet,MaxMana);
+
+	//Other
+	UPROPERTY(BlueprintReadOnly, Category="Attributes")
+	FGameplayAttributeData PrimartyAttackPower;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet,PrimartyAttackPower);
 
 };
