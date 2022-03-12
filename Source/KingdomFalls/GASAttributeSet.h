@@ -55,5 +55,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Attributes")
 	FGameplayAttributeData PrimartyAttackPower;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet,PrimartyAttackPower);
+	
+	UPROPERTY(BlueprintReadOnly, Category="Attributes")
+	FGameplayAttributeData DmgReduce;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet,DmgReduce);
 
 };
