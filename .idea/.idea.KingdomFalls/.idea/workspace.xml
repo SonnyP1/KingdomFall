@@ -7,9 +7,10 @@
   <component name="ChangeListManager">
     <list default="true" id="3818fb4d-71ef-4a3f-b9ac-89734a4ead56" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.KingdomFalls/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.KingdomFalls/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_KingdomFalls/Blueprints/MainCharacter/CharacterAbilities/GA_StaminaRegen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_KingdomFalls/Blueprints/MainCharacter/CharacterAbilities/GA_StaminaRegen.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultInput.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultInput.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/_KingdomFalls/Maps/CastleMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_KingdomFalls/Maps/CastleMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,9 +30,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://C:/Program Files/Epic Games/UE_4.27/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://C:/Program Files/Epic Games/UE_4.27/Engine/Source/Runtime/GameplayTags/Classes/GameplayTagsManager.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://C:/Program Files/Epic Games/UE_4.27/Engine/Source/Runtime/GameplayTags/Classes/GameplayTagContainer.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/KingdomFalls/GASGameplayAbility.h" root0="FORCE_HIGHLIGHTING" />
@@ -43,10 +44,10 @@
       <option value="$PROJECT_DIR$/Source/KingdomFalls/GASGameplayAbility.h" />
       <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.Build.cs" />
       <option value="$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.cpp" />
-      <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" />
       <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.h" />
       <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFallsCharacter.cpp" />
       <option value="$PROJECT_DIR$/Source/KingdomFalls/GASAttributeSet.h" />
+      <option value="$PROJECT_DIR$/Source/KingdomFalls/KingdomFalls.h" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="25wKW9tO5CaY8sir3aC6oiBBb6V" />
@@ -392,6 +393,7 @@
       <workItem from="1646972923608" duration="961000" />
       <workItem from="1646975381627" duration="5529000" />
       <workItem from="1647067489452" duration="1816000" />
+      <workItem from="1648929946580" duration="1296000" />
     </task>
     <servers />
   </component>
