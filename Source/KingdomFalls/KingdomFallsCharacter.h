@@ -30,6 +30,11 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//Variables
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsLockOn;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AActor* lockOnTarget;
 
 	//Components
 		
@@ -66,6 +71,7 @@ protected:
 	void LookRightYawInput(float axisValue);
 	void LookUpPitchInput(float axisValue);
 	void SprintReleased();
+	void LockOnPressed();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelSprint();
 };

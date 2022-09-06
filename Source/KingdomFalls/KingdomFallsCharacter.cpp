@@ -6,11 +6,13 @@
 
 #include "GASGameplayAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include <Kismet/KismetSystemLibrary.h>
 
 // Sets default values
 AKingdomFallsCharacter::AKingdomFallsCharacter()
 {
 	//Make it where it only affect camera rotations not controller rotation
+	bIsLockOn = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -74,6 +76,7 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis(TEXT("LookRight"),this, &AKingdomFallsCharacter::LookRightYawInput);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"),this, &AKingdomFallsCharacter::LookUpPitchInput);
 	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Released,this,&AKingdomFallsCharacter::SprintReleased);
+	PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AKingdomFallsCharacter::LockOnPressed);
 	
 	if(PlayerAbilitySystemComponent && InputComponent)
 	{
@@ -143,4 +146,41 @@ void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 void AKingdomFallsCharacter::SprintReleased()
 {
 	CancelSprint();
+}
+
+void AKingdomFallsCharacter::LockOnPressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("I Pressed lock on button!"));
+
+	FVector forwardVectorOfPlayerEye;
+	FVector actorLoc = GetActorLocation();
+	forwardVectorOfPlayerEye = PlayerEye->GetForwardVector();
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypesArray;
+	ObjectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
+
+	TArray<AActor*, FDefaultAllocator> ActorToIgnore;
+	ActorToIgnore.Add(this);
+
+
+	FHitResult OutHit;
+	UKismetSystemLibrary::SphereTraceSingleForObjects(
+		GetWorld(), 
+		actorLoc, actorLoc+(forwardVectorOfPlayerEye*1000.0f), 50.f,
+		ObjectTypesArray, false, ActorToIgnore, 
+		EDrawDebugTrace::ForDuration, OutHit, true);
+	
+	if (OutHit.IsValidBlockingHit())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
+		lockOnTarget = OutHit.GetActor();
+		bIsLockOn = true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("There is no target"));
+		bIsLockOn = false;
+	}
+
+
 }
