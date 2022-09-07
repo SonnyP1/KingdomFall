@@ -11,8 +11,12 @@
 // Sets default values
 AKingdomFallsCharacter::AKingdomFallsCharacter()
 {
-	//Make it where it only affect camera rotations not controller rotation
+	//Init Variables
 	bIsLockOn = false;
+	_lookMultipler = 1;
+	_moveMultipler = 1;
+
+	//Make it where it only affect camera rotations not controller rotation
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -125,22 +129,22 @@ void AKingdomFallsCharacter::GiveAbilities()
 void AKingdomFallsCharacter::MoveForward(float axisValue)
 {
 	FVector ForwardDir = GetControlRotation().Vector();
-	AddMovementInput(ForwardDir,axisValue);
+	AddMovementInput(ForwardDir,axisValue* _moveMultipler);
 }
 void AKingdomFallsCharacter::MoveRight(float axisValue)
 {
 	FVector RightDir= PlayerEye->GetRightVector();
-	AddMovementInput(RightDir,axisValue);
+	AddMovementInput(RightDir,axisValue*_moveMultipler);
 }
 
 void AKingdomFallsCharacter::LookRightYawInput(float axisValue)
 {
-	AddControllerYawInput(axisValue);
+	AddControllerYawInput(axisValue*_lookMultipler);
 }
 
 void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 {
-	AddControllerPitchInput(axisValue);
+	AddControllerPitchInput(axisValue*_lookMultipler);
 }
 
 void AKingdomFallsCharacter::SprintReleased()
@@ -166,21 +170,27 @@ void AKingdomFallsCharacter::LockOnPressed()
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingleForObjects(
 		GetWorld(), 
-		actorLoc, actorLoc+(forwardVectorOfPlayerEye*1000.0f), 50.f,
+		actorLoc, actorLoc+(forwardVectorOfPlayerEye*2000.0f), 300.f,
 		ObjectTypesArray, false, ActorToIgnore, 
-		EDrawDebugTrace::ForDuration, OutHit, true);
+		EDrawDebugTrace::None, OutHit, true);
 	
-	if (OutHit.IsValidBlockingHit())
+	if (OutHit.IsValidBlockingHit() && bIsLockOn == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
 		lockOnTarget = OutHit.GetActor();
 		bIsLockOn = true;
+		_lookMultipler = 0;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("There is no target"));
 		bIsLockOn = false;
+		_lookMultipler = 1;
 	}
+}
 
-
+void AKingdomFallsCharacter::TurnOffInputs()
+{
+	_lookMultipler = 0;
+	_moveMultipler = 0;
 }

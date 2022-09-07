@@ -62,7 +62,9 @@ public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Gameplay Abilities")
 	TArray<TSubclassOf<class UGASGameplayAbility>> DefaultAbilities;
 
-
+private:
+	float _lookMultipler;
+	float _moveMultipler;
 
 protected:
 	//Input Functions
@@ -74,5 +76,7 @@ protected:
 	void LockOnPressed();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelSprint();
+	UFUNCTION(BlueprintCallable)
+	void TurnOffInputs();
 };
 
