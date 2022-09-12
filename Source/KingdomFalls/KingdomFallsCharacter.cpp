@@ -183,9 +183,30 @@ void AKingdomFallsCharacter::LockOnPressed()
 	}
 	else
 	{
+		QuickTurnCamera(bIsLockOn);
 		UE_LOG(LogTemp, Warning, TEXT("There is no target"));
 		bIsLockOn = false;
 		_lookMultipler = 1;
+	}
+}
+
+
+void AKingdomFallsCharacter::QuickTurnCamera(bool turn)
+{
+	if (!turn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TURN CAMERA STRAIGHT"));
+		float seconds = 0;
+		float maxTime = 5;
+		while (seconds < maxTime)
+		{
+			seconds += FApp::GetDeltaTime();
+			
+			UE_LOG(LogTemp, Warning, TEXT("Time: %f"),seconds);
+			FQuat deltaRot = FMath::Lerp(GetControlRotation().Quaternion(), GetActorRotation().Quaternion(), seconds / maxTime);
+			GetController()->SetControlRotation(deltaRot.Rotator());
+		}
+
 	}
 }
 

@@ -65,6 +65,7 @@ public:
 private:
 	float _lookMultipler;
 	float _moveMultipler;
+	void QuickTurnCamera(bool turn);
 
 protected:
 	//Input Functions
