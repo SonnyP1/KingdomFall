@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Kismet/KismetSystemLibrary.h>
 
+
 // Sets default values
 AKingdomFallsCharacter::AKingdomFallsCharacter()
 {
@@ -62,12 +63,18 @@ void AKingdomFallsCharacter::BeginPlay()
 		PlayerAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,Binds);
 	}
 	Super::BeginPlay();
+
+	timeLine = FTimeline{};
+	FOnTimelineFloat func{};
+	func.BindUFunction(this, "OnCameraTurnUpdate");
+	timeLine.AddInterpFloat(CenterCamCurveFloat, func);
 }
 
 // Called every frame
 void AKingdomFallsCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	timeLine.TickTimeline(DeltaTime);
 
 }
 
@@ -81,7 +88,7 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis(TEXT("LookUp"),this, &AKingdomFallsCharacter::LookUpPitchInput);
 	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Released,this,&AKingdomFallsCharacter::SprintReleased);
 	PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AKingdomFallsCharacter::LockOnPressed);
-	
+
 	if(PlayerAbilitySystemComponent && InputComponent)
 	{
 		const FGameplayAbilityInputBinds Binds("Confirm","Cancel","EGASAbilityInputID",
@@ -195,18 +202,8 @@ void AKingdomFallsCharacter::QuickTurnCamera(bool turn)
 {
 	if (!turn)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TURN CAMERA STRAIGHT"));
-		float seconds = 0;
-		float maxTime = 5;
-		while (seconds < maxTime)
-		{
-			seconds += FApp::GetDeltaTime();
-			
-			UE_LOG(LogTemp, Warning, TEXT("Time: %f"),seconds);
-			FQuat deltaRot = FMath::Lerp(GetControlRotation().Quaternion(), GetActorRotation().Quaternion(), seconds / maxTime);
-			GetController()->SetControlRotation(deltaRot.Rotator());
-		}
-
+		ActorOrignalRoatation = GetActorRotation();
+		timeLine.PlayFromStart();
 	}
 }
 
@@ -214,4 +211,10 @@ void AKingdomFallsCharacter::TurnOffInputs()
 {
 	_lookMultipler = 0;
 	_moveMultipler = 0;
+}
+
+void AKingdomFallsCharacter::OnCameraTurnUpdate(float val)
+{
+	FQuat deltaRot = FMath::Lerp(GetControlRotation().Quaternion(), ActorOrignalRoatation.Quaternion(), val);
+	GetController()->SetControlRotation(deltaRot.Rotator());
 }

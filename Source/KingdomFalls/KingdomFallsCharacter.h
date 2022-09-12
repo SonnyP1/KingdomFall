@@ -11,7 +11,7 @@
 #include "GASAbilitySystemComponent.h"
 #include "GASAttributeSet.h"
 #include "GameplayEffectTypes.h"
-
+#include "Components/TimelineComponent.h"
 #include "KingdomFallsCharacter.generated.h"
 
 UCLASS()
@@ -66,6 +66,7 @@ private:
 	float _lookMultipler;
 	float _moveMultipler;
 	void QuickTurnCamera(bool turn);
+	FRotator ActorOrignalRoatation;
 
 protected:
 	//Input Functions
@@ -79,5 +80,13 @@ protected:
 	void CancelSprint();
 	UFUNCTION(BlueprintCallable)
 	void TurnOffInputs();
+
+	UPROPERTY(EditDefaultsOnly, Category = "timer")
+	UCurveFloat* CenterCamCurveFloat;
+
+	FTimeline timeLine;
+	UFUNCTION()
+	void OnCameraTurnUpdate(float val);
+
 };
 
