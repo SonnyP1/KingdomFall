@@ -7,7 +7,7 @@
 #include "GASGameplayAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Kismet/KismetSystemLibrary.h>
-
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AKingdomFallsCharacter::AKingdomFallsCharacter()
@@ -50,6 +50,10 @@ void AKingdomFallsCharacter::BeginPlay()
 {
 	
 	PlayerAbilitySystemComponent->InitAbilityActorInfo(this,this);
+	timeLine = FTimeline{};
+	FOnTimelineFloat func{};
+	func.BindUFunction(this, "OnCameraTurnUpdate");
+	timeLine.AddInterpFloat(CenterCamCurveFloat, func);
 	
 	InitializeAttributes();
 	GiveAbilities();
@@ -64,10 +68,6 @@ void AKingdomFallsCharacter::BeginPlay()
 	}
 	Super::BeginPlay();
 
-	timeLine = FTimeline{};
-	FOnTimelineFloat func{};
-	func.BindUFunction(this, "OnCameraTurnUpdate");
-	timeLine.AddInterpFloat(CenterCamCurveFloat, func);
 }
 
 // Called every frame
@@ -202,7 +202,9 @@ void AKingdomFallsCharacter::QuickTurnCamera(bool turn)
 {
 	if (!turn)
 	{
+		ActorTurnStartRot = GetControlRotation();
 		ActorOrignalRoatation = GetActorRotation();
+		UE_LOG(LogTemp, Warning, TEXT("start lerp time: %f"), GetWorld()->TimeSeconds);
 		timeLine.PlayFromStart();
 	}
 }
@@ -215,6 +217,13 @@ void AKingdomFallsCharacter::TurnOffInputs()
 
 void AKingdomFallsCharacter::OnCameraTurnUpdate(float val)
 {
-	FQuat deltaRot = FMath::Lerp(GetControlRotation().Quaternion(), ActorOrignalRoatation.Quaternion(), val);
-	GetController()->SetControlRotation(deltaRot.Rotator());
+	UE_LOG(LogTemp, Warning, TEXT("This is the val %f"), val);
+	
+	FRotator goalRot = UKismetMathLibrary::RLerp(ActorTurnStartRot, ActorOrignalRoatation, val, true);
+	GetController()->SetControlRotation(goalRot);
+	if (val == 1)
+	{
+
+		UE_LOG(LogTemp, Warning, TEXT("lerp end time: %f"), GetWorld()->TimeSeconds);
+	}
 }

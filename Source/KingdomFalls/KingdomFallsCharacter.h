@@ -67,7 +67,7 @@ private:
 	float _moveMultipler;
 	void QuickTurnCamera(bool turn);
 	FRotator ActorOrignalRoatation;
-
+	FRotator ActorTurnStartRot;
 protected:
 	//Input Functions
 	void MoveForward(float axisValue);
