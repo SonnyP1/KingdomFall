@@ -7,12 +7,17 @@
 #include "GASGameplayAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Kismet/KismetSystemLibrary.h>
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AKingdomFallsCharacter::AKingdomFallsCharacter()
 {
-	//Make it where it only affect camera rotations not controller rotation
+	//Init Variables
 	bIsLockOn = false;
+	_lookMultipler = 1;
+	_moveMultipler = 1;
+
+	//Make it where it only affect camera rotations not controller rotation
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -45,6 +50,10 @@ void AKingdomFallsCharacter::BeginPlay()
 {
 	
 	PlayerAbilitySystemComponent->InitAbilityActorInfo(this,this);
+	timeLine = FTimeline{};
+	FOnTimelineFloat func{};
+	func.BindUFunction(this, "OnCameraTurnUpdate");
+	timeLine.AddInterpFloat(CenterCamCurveFloat, func);
 	
 	InitializeAttributes();
 	GiveAbilities();
@@ -58,12 +67,14 @@ void AKingdomFallsCharacter::BeginPlay()
 		PlayerAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,Binds);
 	}
 	Super::BeginPlay();
+
 }
 
 // Called every frame
 void AKingdomFallsCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	timeLine.TickTimeline(DeltaTime);
 
 }
 
@@ -77,7 +88,7 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis(TEXT("LookUp"),this, &AKingdomFallsCharacter::LookUpPitchInput);
 	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Released,this,&AKingdomFallsCharacter::SprintReleased);
 	PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AKingdomFallsCharacter::LockOnPressed);
-	
+
 	if(PlayerAbilitySystemComponent && InputComponent)
 	{
 		const FGameplayAbilityInputBinds Binds("Confirm","Cancel","EGASAbilityInputID",
@@ -125,22 +136,22 @@ void AKingdomFallsCharacter::GiveAbilities()
 void AKingdomFallsCharacter::MoveForward(float axisValue)
 {
 	FVector ForwardDir = GetControlRotation().Vector();
-	AddMovementInput(ForwardDir,axisValue);
+	AddMovementInput(ForwardDir,axisValue* _moveMultipler);
 }
 void AKingdomFallsCharacter::MoveRight(float axisValue)
 {
 	FVector RightDir= PlayerEye->GetRightVector();
-	AddMovementInput(RightDir,axisValue);
+	AddMovementInput(RightDir,axisValue*_moveMultipler);
 }
 
 void AKingdomFallsCharacter::LookRightYawInput(float axisValue)
 {
-	AddControllerYawInput(axisValue);
+	AddControllerYawInput(axisValue*_lookMultipler);
 }
 
 void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 {
-	AddControllerPitchInput(axisValue);
+	AddControllerPitchInput(axisValue*_lookMultipler);
 }
 
 void AKingdomFallsCharacter::SprintReleased()
@@ -166,21 +177,53 @@ void AKingdomFallsCharacter::LockOnPressed()
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingleForObjects(
 		GetWorld(), 
-		actorLoc, actorLoc+(forwardVectorOfPlayerEye*1000.0f), 50.f,
+		actorLoc, actorLoc+(forwardVectorOfPlayerEye*2000.0f), 300.f,
 		ObjectTypesArray, false, ActorToIgnore, 
-		EDrawDebugTrace::ForDuration, OutHit, true);
+		EDrawDebugTrace::None, OutHit, true);
 	
-	if (OutHit.IsValidBlockingHit())
+	if (OutHit.IsValidBlockingHit() && bIsLockOn == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
 		lockOnTarget = OutHit.GetActor();
 		bIsLockOn = true;
+		_lookMultipler = 0;
 	}
 	else
 	{
+		QuickTurnCamera(bIsLockOn);
 		UE_LOG(LogTemp, Warning, TEXT("There is no target"));
 		bIsLockOn = false;
+		_lookMultipler = 1;
 	}
+}
 
 
+void AKingdomFallsCharacter::QuickTurnCamera(bool turn)
+{
+	if (!turn)
+	{
+		ActorTurnStartRot = GetControlRotation();
+		ActorOrignalRoatation = GetActorRotation();
+		UE_LOG(LogTemp, Warning, TEXT("start lerp time: %f"), GetWorld()->TimeSeconds);
+		timeLine.PlayFromStart();
+	}
+}
+
+void AKingdomFallsCharacter::TurnOffInputs()
+{
+	_lookMultipler = 0;
+	_moveMultipler = 0;
+}
+
+void AKingdomFallsCharacter::OnCameraTurnUpdate(float val)
+{
+	UE_LOG(LogTemp, Warning, TEXT("This is the val %f"), val);
+	
+	FRotator goalRot = UKismetMathLibrary::RLerp(ActorTurnStartRot, ActorOrignalRoatation, val, true);
+	GetController()->SetControlRotation(goalRot);
+	if (val == 1)
+	{
+
+		UE_LOG(LogTemp, Warning, TEXT("lerp end time: %f"), GetWorld()->TimeSeconds);
+	}
 }
