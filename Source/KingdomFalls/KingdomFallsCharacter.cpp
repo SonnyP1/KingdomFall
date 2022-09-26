@@ -76,6 +76,7 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	timeLine.TickTimeline(DeltaTime);
 
+
 }
 
 // Called to bind functionality to input
@@ -187,6 +188,7 @@ void AKingdomFallsCharacter::LockOnPressed()
 		lockOnTarget = OutHit.GetActor();
 		bIsLockOn = true;
 		_lookMultipler = 0;
+		bUseControllerRotationYaw = true;
 	}
 	else
 	{
@@ -194,6 +196,7 @@ void AKingdomFallsCharacter::LockOnPressed()
 		UE_LOG(LogTemp, Warning, TEXT("There is no target"));
 		bIsLockOn = false;
 		_lookMultipler = 1;
+		bUseControllerRotationYaw = false;
 	}
 }
 
