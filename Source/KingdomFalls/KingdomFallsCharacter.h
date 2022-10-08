@@ -11,7 +11,7 @@
 #include "GASAbilitySystemComponent.h"
 #include "GASAttributeSet.h"
 #include "GameplayEffectTypes.h"
-
+#include "Components/TimelineComponent.h"
 #include "KingdomFallsCharacter.generated.h"
 
 UCLASS()
@@ -30,6 +30,11 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//Variables
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsLockOn;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AActor* lockOnTarget;
 
 	//Components
 		
@@ -57,8 +62,12 @@ public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Gameplay Abilities")
 	TArray<TSubclassOf<class UGASGameplayAbility>> DefaultAbilities;
 
-
-
+private:
+	float _lookMultipler;
+	float _moveMultipler;
+	void QuickTurnCamera(bool turn);
+	FRotator ActorOrignalRoatation;
+	FRotator ActorTurnStartRot;
 protected:
 	//Input Functions
 	void MoveForward(float axisValue);
@@ -66,7 +75,18 @@ protected:
 	void LookRightYawInput(float axisValue);
 	void LookUpPitchInput(float axisValue);
 	void SprintReleased();
+	void LockOnPressed();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelSprint();
+	UFUNCTION(BlueprintCallable)
+	void TurnOffInputs();
+
+	UPROPERTY(EditDefaultsOnly, Category = "timer")
+	UCurveFloat* CenterCamCurveFloat;
+
+	FTimeline timeLine;
+	UFUNCTION()
+	void OnCameraTurnUpdate(float val);
+
 };
 
