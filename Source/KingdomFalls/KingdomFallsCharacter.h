@@ -75,9 +75,12 @@ protected:
 	void LookRightYawInput(float axisValue);
 	void LookUpPitchInput(float axisValue);
 	void SprintReleased();
+	void BlockingReleased();
 	void LockOnPressed();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelSprint();
+	UFUNCTION(BlueprintImplementableEvent)
+	void CancelBlocking();
 	UFUNCTION(BlueprintCallable)
 	void TurnOffInputs();
 

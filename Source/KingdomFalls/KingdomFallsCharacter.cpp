@@ -160,6 +160,11 @@ void AKingdomFallsCharacter::SprintReleased()
 	CancelSprint();
 }
 
+void AKingdomFallsCharacter::BlockingReleased()
+{
+	CancelBlocking();
+}
+
 void AKingdomFallsCharacter::LockOnPressed()
 {
 	UE_LOG(LogTemp, Warning, TEXT("I Pressed lock on button!"));
