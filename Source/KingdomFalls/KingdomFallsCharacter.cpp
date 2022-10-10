@@ -76,6 +76,23 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	timeLine.TickTimeline(DeltaTime);
 
+	if (bIsLockOn)
+	{
+		float Speed = GetCharacterMovement()->Velocity.Size();
+		if (Speed < 750.0)
+		{
+			bUseControllerRotationYaw = true;
+		}
+		else
+		{
+			bUseControllerRotationYaw = false;
+		}
+
+		FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-150.0));
+		FRotator InterpTo = UKismetMathLibrary::RInterpTo(GetControlRotation(), LookAtRot, GetWorld()->DeltaTimeSeconds, 5.0f);
+		FRotator rotToSet = UKismetMathLibrary::MakeRotator(GetControlRotation().Roll,InterpTo.Pitch,InterpTo.Yaw);
+		GetController()->SetControlRotation(rotToSet);
+	}
 
 }
 
@@ -164,6 +181,41 @@ void AKingdomFallsCharacter::SprintReleased()
 void AKingdomFallsCharacter::BlockingReleased()
 {
 	CancelBlocking();
+}
+
+void AKingdomFallsCharacter::AttackCombo()
+{
+	if (_isAttacking)
+	{
+		_saveAttack = true;
+	}
+	else
+	{
+		_isAttacking = true;
+		GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[0], true);
+		switch (_attackCounter)
+		{
+			case 0:
+				_attackCounter = 1;
+				AttackAbility[_attackCounter];
+				break;
+			case 1:
+				_attackCounter = 2;
+				AttackAbility[_attackCounter];
+
+				break;
+			case 2:
+				_attackCounter = 3;
+				AttackAbility[_attackCounter];
+				break;
+			case 3:
+				AttackAbility[_attackCounter];
+				_attackCounter = 0;
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 void AKingdomFallsCharacter::LockOnPressed()

@@ -36,6 +36,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AActor* lockOnTarget;
 
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay Abilities")	
+	TArray<TSubclassOf<class UGASGameplayAbility>> AttackAbility;
+
 	//Components
 		
 		//Camera Comps
@@ -63,11 +66,18 @@ public:
 	TArray<TSubclassOf<class UGASGameplayAbility>> DefaultAbilities;
 
 private:
+	//Variables
+	int _attackCounter;
+	bool _isAttacking;
+	bool _saveAttack;
 	float _lookMultipler;
 	float _moveMultipler;
-	void QuickTurnCamera(bool turn);
 	FRotator ActorOrignalRoatation;
 	FRotator ActorTurnStartRot;
+
+	//Functions 
+	void QuickTurnCamera(bool turn);
+	void AttackCombo();
 protected:
 	//Input Functions
 	void MoveForward(float axisValue);
