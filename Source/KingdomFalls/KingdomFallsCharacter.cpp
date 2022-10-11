@@ -185,7 +185,7 @@ void AKingdomFallsCharacter::BlockingReleased()
 
 void AKingdomFallsCharacter::Attack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack started"));
+	CheckForEnemy();
 	if (_isAttacking)
 	{
 		_saveAttack = true;
