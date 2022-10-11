@@ -37,7 +37,10 @@ public:
 	AActor* lockOnTarget;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay Abilities")	
-	TArray<TSubclassOf<class UGASGameplayAbility>> AttackAbility;
+	TArray<TSubclassOf<class UGASGameplayAbility>> AttackAbility;	
+	
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay Abilities")	
+	TSubclassOf<class UGASGameplayAbility> StaminaRegenAbility;
 
 	//Components
 		
@@ -65,6 +68,7 @@ public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Gameplay Abilities")
 	TArray<TSubclassOf<class UGASGameplayAbility>> DefaultAbilities;
 
+
 private:
 	//Variables
 	int _attackCounter;
@@ -77,7 +81,6 @@ private:
 
 	//Functions 
 	void QuickTurnCamera(bool turn);
-	void AttackCombo();
 protected:
 	//Input Functions
 	void MoveForward(float axisValue);
@@ -93,6 +96,12 @@ protected:
 	void CancelBlocking();
 	UFUNCTION(BlueprintCallable)
 	void TurnOffInputs();
+	UFUNCTION(BlueprintCallable)	
+	void ActivateAttack();
+	UFUNCTION(BlueprintCallable)	
+	void Attack();
+	UFUNCTION(BlueprintCallable)	
+	void AttackCombo();
 
 	UPROPERTY(EditDefaultsOnly, Category = "timer")
 	UCurveFloat* CenterCamCurveFloat;

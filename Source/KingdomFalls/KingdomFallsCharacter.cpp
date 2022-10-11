@@ -183,8 +183,9 @@ void AKingdomFallsCharacter::BlockingReleased()
 	CancelBlocking();
 }
 
-void AKingdomFallsCharacter::AttackCombo()
+void AKingdomFallsCharacter::Attack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Attack started"));
 	if (_isAttacking)
 	{
 		_saveAttack = true;
@@ -192,29 +193,48 @@ void AKingdomFallsCharacter::AttackCombo()
 	else
 	{
 		_isAttacking = true;
-		GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[0], true);
-		switch (_attackCounter)
-		{
-			case 0:
-				_attackCounter = 1;
-				AttackAbility[_attackCounter];
-				break;
-			case 1:
-				_attackCounter = 2;
-				AttackAbility[_attackCounter];
+		ActivateAttack();
+	}
+}
 
-				break;
-			case 2:
-				_attackCounter = 3;
-				AttackAbility[_attackCounter];
-				break;
-			case 3:
-				AttackAbility[_attackCounter];
-				_attackCounter = 0;
-				break;
-			default:
-				break;
-		}
+void AKingdomFallsCharacter::ActivateAttack()
+{
+	GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[0], true);
+	switch (_attackCounter)
+	{
+		case 0:
+			_attackCounter = 1;
+			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
+			break;
+		case 1:
+			_attackCounter = 2;
+			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
+			break;
+		case 2:
+			_attackCounter = 3;
+			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
+			break;
+		case 3:
+			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter+1], true);
+			_attackCounter = 0;
+			break;
+		default:
+			break;
+	}
+
+	GetAbilitySystemComponent()->TryActivateAbilityByClass(StaminaRegenAbility, true);
+}
+
+void AKingdomFallsCharacter::AttackCombo()
+{
+	if (_saveAttack)
+	{
+		_saveAttack = false;
+		ActivateAttack();
+	}
+	else
+	{
+		_isAttacking = false;
 	}
 }
 
