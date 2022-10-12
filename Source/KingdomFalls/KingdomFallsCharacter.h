@@ -103,8 +103,8 @@ protected:
 	void Attack();
 	UFUNCTION(BlueprintCallable)
 	void AttackCombo();
-	UFUNCTION(BlueprintImplementableEvent)
-	void CheckForEnemy();
+	UFUNCTION(BlueprintCallable)
+	void Interrupted();
 	UPROPERTY(EditDefaultsOnly, Category = "timer")
 	UCurveFloat* CenterCamCurveFloat;
 

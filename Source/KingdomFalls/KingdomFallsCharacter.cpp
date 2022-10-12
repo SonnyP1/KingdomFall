@@ -185,7 +185,6 @@ void AKingdomFallsCharacter::BlockingReleased()
 
 void AKingdomFallsCharacter::Attack()
 {
-	CheckForEnemy();
 	if (_isAttacking)
 	{
 		_saveAttack = true;
@@ -236,6 +235,13 @@ void AKingdomFallsCharacter::AttackCombo()
 	{
 		_isAttacking = false;
 	}
+}
+
+void AKingdomFallsCharacter::Interrupted()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Interrupted"))
+	_isAttacking = false;
+	_saveAttack = false;
 }
 
 void AKingdomFallsCharacter::LockOnPressed()
