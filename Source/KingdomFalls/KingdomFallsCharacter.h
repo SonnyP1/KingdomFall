@@ -11,7 +11,7 @@
 #include "GASAbilitySystemComponent.h"
 #include "GASAttributeSet.h"
 #include "GameplayEffectTypes.h"
-
+#include "Components/TimelineComponent.h"
 #include "KingdomFallsCharacter.generated.h"
 
 UCLASS()
@@ -35,6 +35,12 @@ public:
 	bool bIsLockOn;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AActor* lockOnTarget;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay Abilities")	
+	TArray<TSubclassOf<class UGASGameplayAbility>> AttackAbility;	
+	
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay Abilities")	
+	TSubclassOf<class UGASGameplayAbility> StaminaRegenAbility;
 
 	//Components
 		
@@ -63,7 +69,19 @@ public:
 	TArray<TSubclassOf<class UGASGameplayAbility>> DefaultAbilities;
 
 
+private:
+	//Variables
+	int _attackCounter;
+	bool _isAttacking;
+	bool _saveAttack;
+	float _lookMultipler;
+	float _moveMultipler;
+	FRotator ActorOrignalRoatation;
+	FRotator ActorTurnStartRot;
 
+	//Functions 
+	void QuickTurnCamera(bool turn);
+	void AttackOverlap();
 protected:
 	//Input Functions
 	void MoveForward(float axisValue);
@@ -71,8 +89,28 @@ protected:
 	void LookRightYawInput(float axisValue);
 	void LookUpPitchInput(float axisValue);
 	void SprintReleased();
+	void BlockingReleased();
 	void LockOnPressed();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelSprint();
+	UFUNCTION(BlueprintImplementableEvent)
+	void CancelBlocking();
+	UFUNCTION(BlueprintCallable)
+	void TurnOffInputs();
+	UFUNCTION(BlueprintCallable)	
+	void ActivateAttack();
+	UFUNCTION(BlueprintCallable)	
+	void Attack();
+	UFUNCTION(BlueprintCallable)
+	void AttackCombo();
+	UFUNCTION(BlueprintImplementableEvent)
+	void CheckForEnemy();
+	UPROPERTY(EditDefaultsOnly, Category = "timer")
+	UCurveFloat* CenterCamCurveFloat;
+
+	FTimeline timeLine;
+	UFUNCTION()
+	void OnCameraTurnUpdate(float val);
+
 };
 
