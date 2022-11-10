@@ -278,6 +278,7 @@ void AKingdomFallsCharacter::LockOnPressed()
 	{
 		QuickTurnCamera(bIsLockOn);
 		UE_LOG(LogTemp, Warning, TEXT("There is no target"));
+		lockOnTarget = NULL;
 		bIsLockOn = false;
 		_lookMultipler = 1;
 		bUseControllerRotationYaw = false;
