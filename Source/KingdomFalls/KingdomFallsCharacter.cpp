@@ -88,10 +88,13 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 			bUseControllerRotationYaw = false;
 		}
 
-		FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-150.0));
-		FRotator InterpTo = UKismetMathLibrary::RInterpTo(GetControlRotation(), LookAtRot, GetWorld()->DeltaTimeSeconds, 5.0f);
-		FRotator rotToSet = UKismetMathLibrary::MakeRotator(GetControlRotation().Roll,InterpTo.Pitch,InterpTo.Yaw);
-		GetController()->SetControlRotation(rotToSet);
+		if (lockOnTarget != NULL)
+		{
+			FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-150.0));
+			FRotator InterpTo = UKismetMathLibrary::RInterpTo(GetControlRotation(), LookAtRot, GetWorld()->DeltaTimeSeconds, 5.0f);
+			FRotator rotToSet = UKismetMathLibrary::MakeRotator(GetControlRotation().Roll,InterpTo.Pitch,InterpTo.Yaw);
+			GetController()->SetControlRotation(rotToSet);
+		}
 	}
 
 }
