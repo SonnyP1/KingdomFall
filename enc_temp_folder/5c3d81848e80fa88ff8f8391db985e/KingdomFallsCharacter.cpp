@@ -79,13 +79,13 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 	if (bIsLockOn)
 	{
 		float Speed = GetCharacterMovement()->Velocity.Size();
-		if (Speed > 675.0f || bIsDodging)
+		if (Speed < 675.0f || !bIsDodging)
 		{
-			bUseControllerRotationYaw = false;
+			bUseControllerRotationYaw = true;
 		}
 		else
 		{
-			bUseControllerRotationYaw = true;
+			bUseControllerRotationYaw = false;
 		}
 
 		if (lockOnTarget != NULL)

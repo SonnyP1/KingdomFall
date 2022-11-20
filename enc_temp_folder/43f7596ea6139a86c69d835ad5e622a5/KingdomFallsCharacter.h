@@ -33,10 +33,10 @@ public:
 	//Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsLockOn;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	AActor* lockOnTarget;
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsDodging;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AActor* lockOnTarget;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay Abilities")	
 	TArray<TSubclassOf<class UGASGameplayAbility>> AttackAbility;	
