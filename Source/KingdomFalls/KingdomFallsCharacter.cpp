@@ -79,13 +79,13 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 	if (bIsLockOn)
 	{
 		float Speed = GetCharacterMovement()->Velocity.Size();
-		if (Speed < 750.0)
+		if (Speed > 675.0f || bIsDodging)
 		{
-			bUseControllerRotationYaw = true;
+			bUseControllerRotationYaw = false;
 		}
 		else
 		{
-			bUseControllerRotationYaw = false;
+			bUseControllerRotationYaw = true;
 		}
 
 		if (lockOnTarget != NULL)
@@ -249,8 +249,6 @@ void AKingdomFallsCharacter::Interrupted()
 
 void AKingdomFallsCharacter::LockOnPressed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("I Pressed lock on button!"));
-
 	FVector forwardVectorOfPlayerEye;
 	FVector actorLoc = GetActorLocation();
 	forwardVectorOfPlayerEye = PlayerEye->GetForwardVector();
@@ -271,7 +269,7 @@ void AKingdomFallsCharacter::LockOnPressed()
 	
 	if (OutHit.IsValidBlockingHit() && bIsLockOn == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
 		lockOnTarget = OutHit.GetActor();
 		bIsLockOn = true;
 		_lookMultipler = 0;
@@ -280,7 +278,6 @@ void AKingdomFallsCharacter::LockOnPressed()
 	else
 	{
 		QuickTurnCamera(bIsLockOn);
-		UE_LOG(LogTemp, Warning, TEXT("There is no target"));
 		lockOnTarget = NULL;
 		bIsLockOn = false;
 		_lookMultipler = 1;
@@ -295,7 +292,6 @@ void AKingdomFallsCharacter::QuickTurnCamera(bool turn)
 	{
 		ActorTurnStartRot = GetControlRotation();
 		ActorOrignalRoatation = GetActorRotation();
-		UE_LOG(LogTemp, Warning, TEXT("start lerp time: %f"), GetWorld()->TimeSeconds);
 		timeLine.PlayFromStart();
 	}
 }
@@ -308,13 +304,11 @@ void AKingdomFallsCharacter::TurnOffInputs()
 
 void AKingdomFallsCharacter::OnCameraTurnUpdate(float val)
 {
-	UE_LOG(LogTemp, Warning, TEXT("This is the val %f"), val);
 	
 	FRotator goalRot = UKismetMathLibrary::RLerp(ActorTurnStartRot, ActorOrignalRoatation, val, true);
 	GetController()->SetControlRotation(goalRot);
 	if (val == 1)
 	{
-
 		UE_LOG(LogTemp, Warning, TEXT("lerp end time: %f"), GetWorld()->TimeSeconds);
 	}
 }

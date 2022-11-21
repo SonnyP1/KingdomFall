@@ -35,6 +35,8 @@ public:
 	bool bIsLockOn;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AActor* lockOnTarget;
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsDodging;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay Abilities")	
 	TArray<TSubclassOf<class UGASGameplayAbility>> AttackAbility;	
