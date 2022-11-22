@@ -110,6 +110,7 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Released,this,&AKingdomFallsCharacter::SprintReleased);
 	PlayerInputComponent->BindAction(TEXT("Shield"),IE_Released,this,&AKingdomFallsCharacter::BlockingReleased);
 	PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AKingdomFallsCharacter::LockOnPressed);
+	PlayerInputComponent->BindAction(TEXT("Punch"), IE_Pressed, this, &AKingdomFallsCharacter::AttackPressed);
 
 	if(PlayerAbilitySystemComponent && InputComponent)
 	{
@@ -186,66 +187,12 @@ void AKingdomFallsCharacter::BlockingReleased()
 	CancelBlocking();
 }
 
-void AKingdomFallsCharacter::Attack()
+void AKingdomFallsCharacter::AttackPressed()
 {
-	if (_isAttacking)
-	{
-		_saveAttack = true;
-	}
-	else
-	{
-		_isAttacking = true;
-		ActivateAttack();
-	}
+	UE_LOG(LogTemp, Warning, TEXT("ATTACK"));
+	HandleAttack();
 }
 
-void AKingdomFallsCharacter::ActivateAttack()
-{
-	GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[0], true);
-	switch (_attackCounter)
-	{
-		case 0:
-			_attackCounter = 1;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 1:
-			_attackCounter = 2;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 2:
-			_attackCounter = 3;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 3:
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter+1], true);
-			_attackCounter = 0;
-			break;
-		default:
-			break;
-	}
-
-	GetAbilitySystemComponent()->TryActivateAbilityByClass(StaminaRegenAbility, true);
-}
-
-void AKingdomFallsCharacter::AttackCombo()
-{
-	if (_saveAttack)
-	{
-		_saveAttack = false;
-		ActivateAttack();
-	}
-	else
-	{
-		_isAttacking = false;
-	}
-}
-
-void AKingdomFallsCharacter::Interrupted()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Interrupted"))
-	_isAttacking = false;
-	_saveAttack = false;
-}
 
 void AKingdomFallsCharacter::LockOnPressed()
 {

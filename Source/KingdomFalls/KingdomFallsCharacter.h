@@ -83,7 +83,6 @@ private:
 
 	//Functions 
 	void QuickTurnCamera(bool turn);
-	void AttackOverlap();
 protected:
 	//Input Functions
 	void MoveForward(float axisValue);
@@ -93,20 +92,15 @@ protected:
 	void SprintReleased();
 	void BlockingReleased();
 	void LockOnPressed();
+	void AttackPressed();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelSprint();
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandleAttack();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelBlocking();
 	UFUNCTION(BlueprintCallable)
 	void TurnOffInputs();
-	UFUNCTION(BlueprintCallable)	
-	void ActivateAttack();
-	UFUNCTION(BlueprintCallable)	
-	void Attack();
-	UFUNCTION(BlueprintCallable)
-	void AttackCombo();
-	UFUNCTION(BlueprintCallable)
-	void Interrupted();
 	UPROPERTY(EditDefaultsOnly, Category = "timer")
 	UCurveFloat* CenterCamCurveFloat;
 
