@@ -221,10 +221,12 @@ void AKingdomFallsCharacter::LockOnPressed()
 		bIsLockOn = true;
 		_lookMultipler = 0;
 		bUseControllerRotationYaw = true;
+		UpdateTargetUIWidget(false);
 	}
 	else
 	{
 		QuickTurnCamera(bIsLockOn);
+		UpdateTargetUIWidget(true);
 		lockOnTarget = NULL;
 		bIsLockOn = false;
 		_lookMultipler = 1;

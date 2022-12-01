@@ -94,6 +94,8 @@ protected:
 	void LockOnPressed();
 	void AttackPressed();
 	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateTargetUIWidget(bool isHidden);
+	UFUNCTION(BlueprintImplementableEvent)
 	void CancelSprint();
 	UFUNCTION(BlueprintImplementableEvent)
 	void HandleAttack();
