@@ -206,14 +206,16 @@ void AKingdomFallsCharacter::LockOnPressed()
 	TArray<AActor*, FDefaultAllocator> ActorToIgnore;
 	ActorToIgnore.Add(this);
 
-
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingleForObjects(
 		GetWorld(), 
-		actorLoc, actorLoc+(forwardVectorOfPlayerEye*2000.0f), 300.f,
+		actorLoc - (forwardVectorOfPlayerEye*1000.f), actorLoc + (forwardVectorOfPlayerEye * 2000.0f), 500.f,
 		ObjectTypesArray, false, ActorToIgnore, 
-		EDrawDebugTrace::None, OutHit, true);
-	
+		EDrawDebugTrace::ForDuration, OutHit, true,FLinearColor::Red,FLinearColor::Green,2);
+
+	UE_LOG(LogTemp, Warning, TEXT("Is Lock On?  %s"), bIsLockOn? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Warning, TEXT("IsValideBlockingHit %s"), OutHit.IsValidBlockingHit() ? TEXT("true") : TEXT("false"));
+
 	if (OutHit.IsValidBlockingHit() && bIsLockOn == false)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
