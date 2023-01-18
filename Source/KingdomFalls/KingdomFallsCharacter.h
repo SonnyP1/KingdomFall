@@ -70,9 +70,13 @@ public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Gameplay Abilities")
 	TArray<TSubclassOf<class UGASGameplayAbility>> DefaultAbilities;
 
+	UFUNCTION(BlueprintCallable)
+	void LockOnPressed();
+
 
 private:
 	//Variables
+	float _maxAnglePitch = 250.0f;
 	int _attackCounter;
 	bool _isAttacking;
 	bool _saveAttack;
@@ -91,7 +95,6 @@ protected:
 	void LookUpPitchInput(float axisValue);
 	void SprintReleased();
 	void BlockingReleased();
-	void LockOnPressed();
 	void AttackPressed();
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateTargetUIWidget(bool isHidden);
