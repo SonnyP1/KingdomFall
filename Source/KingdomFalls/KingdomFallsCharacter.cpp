@@ -174,7 +174,12 @@ void AKingdomFallsCharacter::LookRightYawInput(float axisValue)
 
 void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 {
-	AddControllerPitchInput(axisValue*_lookMultipler);
+	UE_LOG(LogTemp,Warning,TEXT("Pitch Rot? %f"), GetControlRotation().Pitch)
+	if(GetControlRotation().Pitch >= _maxAnglePitch)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("To High"))
+	}
+	AddControllerPitchInput(axisValue * _lookMultipler);
 }
 
 void AKingdomFallsCharacter::SprintReleased()
@@ -255,9 +260,8 @@ void AKingdomFallsCharacter::TurnOffInputs()
 
 void AKingdomFallsCharacter::OnCameraTurnUpdate(float val)
 {
-	
 	FRotator goalRot = UKismetMathLibrary::RLerp(ActorTurnStartRot, ActorOrignalRoatation, val, true);
-	GetController()->SetControlRotation(goalRot);
+
 	if (val == 1)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("lerp end time: %f"), GetWorld()->TimeSeconds);
