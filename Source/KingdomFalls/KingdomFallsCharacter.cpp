@@ -79,19 +79,22 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 	if (bIsLockOn)
 	{
 		float Speed = GetCharacterMovement()->Velocity.Size();
-		if (Speed < 750.0)
-		{
-			bUseControllerRotationYaw = true;
-		}
-		else
+		if (Speed > 675.0f || bIsDodging)
 		{
 			bUseControllerRotationYaw = false;
 		}
+		else
+		{
+			bUseControllerRotationYaw = true;
+		}
 
-		FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-150.0));
-		FRotator InterpTo = UKismetMathLibrary::RInterpTo(GetControlRotation(), LookAtRot, GetWorld()->DeltaTimeSeconds, 5.0f);
-		FRotator rotToSet = UKismetMathLibrary::MakeRotator(GetControlRotation().Roll,InterpTo.Pitch,InterpTo.Yaw);
-		GetController()->SetControlRotation(rotToSet);
+		if (lockOnTarget != NULL)
+		{
+			FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-150.0));
+			FRotator InterpTo = UKismetMathLibrary::RInterpTo(GetControlRotation(), LookAtRot, GetWorld()->DeltaTimeSeconds, 5.0f);
+			FRotator rotToSet = UKismetMathLibrary::MakeRotator(GetControlRotation().Roll,InterpTo.Pitch,InterpTo.Yaw);
+			GetController()->SetControlRotation(rotToSet);
+		}
 	}
 
 }
@@ -107,6 +110,7 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Released,this,&AKingdomFallsCharacter::SprintReleased);
 	PlayerInputComponent->BindAction(TEXT("Shield"),IE_Released,this,&AKingdomFallsCharacter::BlockingReleased);
 	PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AKingdomFallsCharacter::LockOnPressed);
+	PlayerInputComponent->BindAction(TEXT("Punch"), IE_Pressed, this, &AKingdomFallsCharacter::AttackPressed);
 
 	if(PlayerAbilitySystemComponent && InputComponent)
 	{
@@ -170,7 +174,12 @@ void AKingdomFallsCharacter::LookRightYawInput(float axisValue)
 
 void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 {
-	AddControllerPitchInput(axisValue*_lookMultipler);
+	UE_LOG(LogTemp,Warning,TEXT("Pitch Rot? %f"), GetControlRotation().Pitch)
+	if(GetControlRotation().Pitch >= _maxAnglePitch)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("To High"))
+	}
+	AddControllerPitchInput(axisValue * _lookMultipler);
 }
 
 void AKingdomFallsCharacter::SprintReleased()
@@ -183,71 +192,15 @@ void AKingdomFallsCharacter::BlockingReleased()
 	CancelBlocking();
 }
 
-void AKingdomFallsCharacter::Attack()
+void AKingdomFallsCharacter::AttackPressed()
 {
-	if (_isAttacking)
-	{
-		_saveAttack = true;
-	}
-	else
-	{
-		_isAttacking = true;
-		ActivateAttack();
-	}
+	UE_LOG(LogTemp, Warning, TEXT("ATTACK"));
+	HandleAttack();
 }
 
-void AKingdomFallsCharacter::ActivateAttack()
-{
-	GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[0], true);
-	switch (_attackCounter)
-	{
-		case 0:
-			_attackCounter = 1;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 1:
-			_attackCounter = 2;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 2:
-			_attackCounter = 3;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 3:
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter+1], true);
-			_attackCounter = 0;
-			break;
-		default:
-			break;
-	}
-
-	GetAbilitySystemComponent()->TryActivateAbilityByClass(StaminaRegenAbility, true);
-}
-
-void AKingdomFallsCharacter::AttackCombo()
-{
-	if (_saveAttack)
-	{
-		_saveAttack = false;
-		ActivateAttack();
-	}
-	else
-	{
-		_isAttacking = false;
-	}
-}
-
-void AKingdomFallsCharacter::Interrupted()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Interrupted"))
-	_isAttacking = false;
-	_saveAttack = false;
-}
 
 void AKingdomFallsCharacter::LockOnPressed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("I Pressed lock on button!"));
-
 	FVector forwardVectorOfPlayerEye;
 	FVector actorLoc = GetActorLocation();
 	forwardVectorOfPlayerEye = PlayerEye->GetForwardVector();
@@ -258,26 +211,29 @@ void AKingdomFallsCharacter::LockOnPressed()
 	TArray<AActor*, FDefaultAllocator> ActorToIgnore;
 	ActorToIgnore.Add(this);
 
-
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingleForObjects(
 		GetWorld(), 
-		actorLoc, actorLoc+(forwardVectorOfPlayerEye*2000.0f), 300.f,
+		actorLoc - (forwardVectorOfPlayerEye*1000.f), actorLoc + (forwardVectorOfPlayerEye * 2000.0f), 500.f,
 		ObjectTypesArray, false, ActorToIgnore, 
-		EDrawDebugTrace::None, OutHit, true);
-	
+		EDrawDebugTrace::ForDuration, OutHit, true,FLinearColor::Red,FLinearColor::Green,2);
+
+	UE_LOG(LogTemp, Warning, TEXT("Is Lock On?  %s"), bIsLockOn? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Warning, TEXT("IsValideBlockingHit %s"), OutHit.IsValidBlockingHit() ? TEXT("true") : TEXT("false"));
+
 	if (OutHit.IsValidBlockingHit() && bIsLockOn == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
 		lockOnTarget = OutHit.GetActor();
 		bIsLockOn = true;
 		_lookMultipler = 0;
 		bUseControllerRotationYaw = true;
+		UpdateTargetUIWidget(false);
 	}
 	else
 	{
 		QuickTurnCamera(bIsLockOn);
-		UE_LOG(LogTemp, Warning, TEXT("There is no target"));
+		UpdateTargetUIWidget(true);
 		lockOnTarget = NULL;
 		bIsLockOn = false;
 		_lookMultipler = 1;
@@ -292,7 +248,6 @@ void AKingdomFallsCharacter::QuickTurnCamera(bool turn)
 	{
 		ActorTurnStartRot = GetControlRotation();
 		ActorOrignalRoatation = GetActorRotation();
-		UE_LOG(LogTemp, Warning, TEXT("start lerp time: %f"), GetWorld()->TimeSeconds);
 		timeLine.PlayFromStart();
 	}
 }
@@ -305,13 +260,10 @@ void AKingdomFallsCharacter::TurnOffInputs()
 
 void AKingdomFallsCharacter::OnCameraTurnUpdate(float val)
 {
-	UE_LOG(LogTemp, Warning, TEXT("This is the val %f"), val);
-	
 	FRotator goalRot = UKismetMathLibrary::RLerp(ActorTurnStartRot, ActorOrignalRoatation, val, true);
-	GetController()->SetControlRotation(goalRot);
+
 	if (val == 1)
 	{
-
 		UE_LOG(LogTemp, Warning, TEXT("lerp end time: %f"), GetWorld()->TimeSeconds);
 	}
 }

@@ -35,6 +35,8 @@ public:
 	bool bIsLockOn;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AActor* lockOnTarget;
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsDodging;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay Abilities")	
 	TArray<TSubclassOf<class UGASGameplayAbility>> AttackAbility;	
@@ -68,9 +70,13 @@ public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Gameplay Abilities")
 	TArray<TSubclassOf<class UGASGameplayAbility>> DefaultAbilities;
 
+	UFUNCTION(BlueprintCallable)
+	void LockOnPressed();
+
 
 private:
 	//Variables
+	float _maxAnglePitch = 250.0f;
 	int _attackCounter;
 	bool _isAttacking;
 	bool _saveAttack;
@@ -81,7 +87,6 @@ private:
 
 	//Functions 
 	void QuickTurnCamera(bool turn);
-	void AttackOverlap();
 protected:
 	//Input Functions
 	void MoveForward(float axisValue);
@@ -90,21 +95,17 @@ protected:
 	void LookUpPitchInput(float axisValue);
 	void SprintReleased();
 	void BlockingReleased();
-	void LockOnPressed();
+	void AttackPressed();
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateTargetUIWidget(bool isHidden);
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelSprint();
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandleAttack();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelBlocking();
 	UFUNCTION(BlueprintCallable)
 	void TurnOffInputs();
-	UFUNCTION(BlueprintCallable)	
-	void ActivateAttack();
-	UFUNCTION(BlueprintCallable)	
-	void Attack();
-	UFUNCTION(BlueprintCallable)
-	void AttackCombo();
-	UFUNCTION(BlueprintCallable)
-	void Interrupted();
 	UPROPERTY(EditDefaultsOnly, Category = "timer")
 	UCurveFloat* CenterCamCurveFloat;
 
