@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Kismet/KismetSystemLibrary.h>
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AKingdomFallsCharacter::AKingdomFallsCharacter()
@@ -16,6 +17,8 @@ AKingdomFallsCharacter::AKingdomFallsCharacter()
 	bIsLockOn = false;
 	_lookMultipler = 1;
 	_moveMultipler = 1;
+
+	PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 
 	//Make it where it only affect camera rotations not controller rotation
 	bUseControllerRotationPitch = false;
@@ -90,10 +93,11 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 
 		if (lockOnTarget != NULL)
 		{
-			FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-150.0));
+			FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-200.0f));
 			FRotator InterpTo = UKismetMathLibrary::RInterpTo(GetControlRotation(), LookAtRot, GetWorld()->DeltaTimeSeconds, 5.0f);
 			FRotator rotToSet = UKismetMathLibrary::MakeRotator(GetControlRotation().Roll,InterpTo.Pitch,InterpTo.Yaw);
 			GetController()->SetControlRotation(rotToSet);
+			UE_LOG(LogTemp, Warning, TEXT("Lock on pitch rot is : %f"), rotToSet.Pitch);
 		}
 	}
 
@@ -174,11 +178,6 @@ void AKingdomFallsCharacter::LookRightYawInput(float axisValue)
 
 void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Pitch Rot? %f"), GetControlRotation().Pitch)
-	if(GetControlRotation().Pitch >= _maxAnglePitch)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("To High"))
-	}
 	AddControllerPitchInput(axisValue * _lookMultipler);
 }
 
@@ -197,7 +196,6 @@ void AKingdomFallsCharacter::AttackPressed()
 	UE_LOG(LogTemp, Warning, TEXT("ATTACK"));
 	HandleAttack();
 }
-
 
 void AKingdomFallsCharacter::LockOnPressed()
 {
@@ -224,14 +222,26 @@ void AKingdomFallsCharacter::LockOnPressed()
 	if (OutHit.IsValidBlockingHit() && bIsLockOn == false)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
+
 		lockOnTarget = OutHit.GetActor();
+
+		if (isTargetDead(lockOnTarget))
+		{
+			return;
+		}
 		bIsLockOn = true;
+		PlayerCameraManager->ViewPitchMin = -20;
+		PlayerCameraManager->ViewPitchMax = 20;		
+		
+
 		_lookMultipler = 0;
 		bUseControllerRotationYaw = true;
 		UpdateTargetUIWidget(false);
 	}
 	else
 	{
+		PlayerCameraManager->ViewPitchMin = -40;
+		PlayerCameraManager->ViewPitchMax = 40;
 		QuickTurnCamera(bIsLockOn);
 		UpdateTargetUIWidget(true);
 		lockOnTarget = NULL;
