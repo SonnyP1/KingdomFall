@@ -99,6 +99,7 @@ protected:
 	void SprintReleased();
 	void BlockingReleased();
 	void AttackPressed();
+	void AttackReleased();
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateTargetUIWidget(bool isHidden);
 
@@ -106,7 +107,9 @@ protected:
 
 	void CancelSprint();
 	UFUNCTION(BlueprintImplementableEvent)
-	void HandleAttack();
+	void HandleAttackPressed();
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandleAttackReleased();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelBlocking();
 	UFUNCTION(BlueprintCallable)

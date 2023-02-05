@@ -115,6 +115,7 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAction(TEXT("Shield"),IE_Released,this,&AKingdomFallsCharacter::BlockingReleased);
 	PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AKingdomFallsCharacter::LockOnPressed);
 	PlayerInputComponent->BindAction(TEXT("Punch"), IE_Pressed, this, &AKingdomFallsCharacter::AttackPressed);
+	PlayerInputComponent->BindAction(TEXT("Punch"), IE_Released, this, &AKingdomFallsCharacter::AttackReleased);
 
 	if(PlayerAbilitySystemComponent && InputComponent)
 	{
@@ -193,8 +194,12 @@ void AKingdomFallsCharacter::BlockingReleased()
 
 void AKingdomFallsCharacter::AttackPressed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ATTACK"));
-	HandleAttack();
+	HandleAttackPressed();
+}
+
+void AKingdomFallsCharacter::AttackReleased()
+{
+	HandleAttackReleased();
 }
 
 void AKingdomFallsCharacter::LockOnPressed()
