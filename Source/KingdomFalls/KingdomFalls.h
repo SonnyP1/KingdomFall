@@ -14,6 +14,7 @@ enum class EGASAbilityInputID : uint8
 	Dodge,
 	Sprint,
 	FireballAttack,
+	RingOfFire,
 	LockOn,
 	Shield
 };

@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Kismet/KismetSystemLibrary.h>
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AKingdomFallsCharacter::AKingdomFallsCharacter()
@@ -16,6 +17,8 @@ AKingdomFallsCharacter::AKingdomFallsCharacter()
 	bIsLockOn = false;
 	_lookMultipler = 1;
 	_moveMultipler = 1;
+
+	PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 
 	//Make it where it only affect camera rotations not controller rotation
 	bUseControllerRotationPitch = false;
@@ -90,10 +93,11 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 
 		if (lockOnTarget != NULL)
 		{
-			FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-150.0));
+			FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(lockOnTarget->GetActorLocation().X,lockOnTarget->GetActorLocation().Y,lockOnTarget->GetActorLocation().Z-200.0f));
 			FRotator InterpTo = UKismetMathLibrary::RInterpTo(GetControlRotation(), LookAtRot, GetWorld()->DeltaTimeSeconds, 5.0f);
 			FRotator rotToSet = UKismetMathLibrary::MakeRotator(GetControlRotation().Roll,InterpTo.Pitch,InterpTo.Yaw);
 			GetController()->SetControlRotation(rotToSet);
+			UE_LOG(LogTemp, Warning, TEXT("Lock on pitch rot is : %f"), rotToSet.Pitch);
 		}
 	}
 
@@ -110,6 +114,8 @@ void AKingdomFallsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Released,this,&AKingdomFallsCharacter::SprintReleased);
 	PlayerInputComponent->BindAction(TEXT("Shield"),IE_Released,this,&AKingdomFallsCharacter::BlockingReleased);
 	PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AKingdomFallsCharacter::LockOnPressed);
+	PlayerInputComponent->BindAction(TEXT("Punch"), IE_Pressed, this, &AKingdomFallsCharacter::AttackPressed);
+	PlayerInputComponent->BindAction(TEXT("Punch"), IE_Released, this, &AKingdomFallsCharacter::AttackReleased);
 
 	if(PlayerAbilitySystemComponent && InputComponent)
 	{
@@ -173,7 +179,7 @@ void AKingdomFallsCharacter::LookRightYawInput(float axisValue)
 
 void AKingdomFallsCharacter::LookUpPitchInput(float axisValue)
 {
-	AddControllerPitchInput(axisValue*_lookMultipler);
+	AddControllerPitchInput(axisValue * _lookMultipler);
 }
 
 void AKingdomFallsCharacter::SprintReleased()
@@ -186,65 +192,14 @@ void AKingdomFallsCharacter::BlockingReleased()
 	CancelBlocking();
 }
 
-void AKingdomFallsCharacter::Attack()
+void AKingdomFallsCharacter::AttackPressed()
 {
-	if (_isAttacking)
-	{
-		_saveAttack = true;
-	}
-	else
-	{
-		_isAttacking = true;
-		ActivateAttack();
-	}
+	HandleAttackPressed();
 }
 
-void AKingdomFallsCharacter::ActivateAttack()
+void AKingdomFallsCharacter::AttackReleased()
 {
-	GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[0], true);
-	switch (_attackCounter)
-	{
-		case 0:
-			_attackCounter = 1;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 1:
-			_attackCounter = 2;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 2:
-			_attackCounter = 3;
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter], true);
-			break;
-		case 3:
-			GetAbilitySystemComponent()->TryActivateAbilityByClass(AttackAbility[_attackCounter+1], true);
-			_attackCounter = 0;
-			break;
-		default:
-			break;
-	}
-
-	GetAbilitySystemComponent()->TryActivateAbilityByClass(StaminaRegenAbility, true);
-}
-
-void AKingdomFallsCharacter::AttackCombo()
-{
-	if (_saveAttack)
-	{
-		_saveAttack = false;
-		ActivateAttack();
-	}
-	else
-	{
-		_isAttacking = false;
-	}
-}
-
-void AKingdomFallsCharacter::Interrupted()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Interrupted"))
-	_isAttacking = false;
-	_saveAttack = false;
+	HandleAttackReleased();
 }
 
 void AKingdomFallsCharacter::LockOnPressed()
@@ -259,25 +214,41 @@ void AKingdomFallsCharacter::LockOnPressed()
 	TArray<AActor*, FDefaultAllocator> ActorToIgnore;
 	ActorToIgnore.Add(this);
 
-
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingleForObjects(
 		GetWorld(), 
-		actorLoc, actorLoc+(forwardVectorOfPlayerEye*2000.0f), 300.f,
+		actorLoc - (forwardVectorOfPlayerEye*1000.f), actorLoc + (forwardVectorOfPlayerEye * 2000.0f), 500.f,
 		ObjectTypesArray, false, ActorToIgnore, 
-		EDrawDebugTrace::None, OutHit, true);
-	
+		EDrawDebugTrace::ForDuration, OutHit, true,FLinearColor::Red,FLinearColor::Green,2);
+
+	UE_LOG(LogTemp, Warning, TEXT("Is Lock On?  %s"), bIsLockOn? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Warning, TEXT("IsValideBlockingHit %s"), OutHit.IsValidBlockingHit() ? TEXT("true") : TEXT("false"));
+
 	if (OutHit.IsValidBlockingHit() && bIsLockOn == false)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
+
 		lockOnTarget = OutHit.GetActor();
+
+		if (isTargetDead(lockOnTarget))
+		{
+			return;
+		}
 		bIsLockOn = true;
+		PlayerCameraManager->ViewPitchMin = -20;
+		PlayerCameraManager->ViewPitchMax = 20;		
+		
+
 		_lookMultipler = 0;
 		bUseControllerRotationYaw = true;
+		UpdateTargetUIWidget(false);
 	}
 	else
 	{
+		PlayerCameraManager->ViewPitchMin = -40;
+		PlayerCameraManager->ViewPitchMax = 40;
 		QuickTurnCamera(bIsLockOn);
+		UpdateTargetUIWidget(true);
 		lockOnTarget = NULL;
 		bIsLockOn = false;
 		_lookMultipler = 1;
@@ -304,9 +275,8 @@ void AKingdomFallsCharacter::TurnOffInputs()
 
 void AKingdomFallsCharacter::OnCameraTurnUpdate(float val)
 {
-	
 	FRotator goalRot = UKismetMathLibrary::RLerp(ActorTurnStartRot, ActorOrignalRoatation, val, true);
-	GetController()->SetControlRotation(goalRot);
+
 	if (val == 1)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("lerp end time: %f"), GetWorld()->TimeSeconds);

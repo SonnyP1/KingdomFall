@@ -1,0 +1,13 @@
+to merge
+go to master
+do:
+git merge [yourBranchName]
+
+if conflict:
+do:
+git checkout --theirs .
+
+then:
+git add -A
+
+git commit -m "commit msg"
