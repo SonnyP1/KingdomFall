@@ -50,6 +50,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	USpringArmComponent * PlayerEyeSpringArm;
 	UCameraComponent* PlayerEye;
+	APlayerCameraManager* PlayerCameraManager;
 	
 		//Abilities Comps
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="AbilitySystem")
@@ -73,6 +74,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LockOnPressed();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	bool isTargetDead(AActor* target);
 
 private:
 	//Variables
@@ -96,12 +99,17 @@ protected:
 	void SprintReleased();
 	void BlockingReleased();
 	void AttackPressed();
+	void AttackReleased();
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateTargetUIWidget(bool isHidden);
+
 	UFUNCTION(BlueprintImplementableEvent)
+
 	void CancelSprint();
 	UFUNCTION(BlueprintImplementableEvent)
-	void HandleAttack();
+	void HandleAttackPressed();
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandleAttackReleased();
 	UFUNCTION(BlueprintImplementableEvent)
 	void CancelBlocking();
 	UFUNCTION(BlueprintCallable)
