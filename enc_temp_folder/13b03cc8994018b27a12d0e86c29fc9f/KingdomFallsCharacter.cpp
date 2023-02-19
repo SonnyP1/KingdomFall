@@ -22,7 +22,7 @@ AKingdomFallsCharacter::AKingdomFallsCharacter()
 
 	//Make it where it only affect camera rotations not controller rotation
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 	
 	//Spring Arm Stuff
@@ -70,6 +70,7 @@ void AKingdomFallsCharacter::BeginPlay()
 		PlayerAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,Binds);
 	}
 	Super::BeginPlay();
+
 }
 
 // Called every frame
@@ -83,11 +84,11 @@ void AKingdomFallsCharacter::Tick(float DeltaTime)
 		float Speed = GetCharacterMovement()->Velocity.Size();
 		if (Speed > 675.0f || bIsDodging)
 		{
-			bUseControllerRotationYaw = false;
+			//bUseControllerRotationYaw = false;
 		}
 		else
 		{
-			bUseControllerRotationYaw = true;
+			//bUseControllerRotationYaw = true;
 		}
 
 		if (lockOnTarget != NULL)
@@ -225,7 +226,7 @@ void AKingdomFallsCharacter::LockOnPressed()
 
 	if (OutHit.IsValidBlockingHit() && bIsLockOn == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("This is the target %s"), *OutHit.GetActor()->GetName());
 
 		lockOnTarget = OutHit.GetActor();
 
@@ -239,7 +240,7 @@ void AKingdomFallsCharacter::LockOnPressed()
 		
 
 		_lookMultipler = 0;
-		bUseControllerRotationYaw = true;
+		//bUseControllerRotationYaw = true;
 		UpdateTargetUIWidget(false);
 	}
 	else
@@ -251,7 +252,7 @@ void AKingdomFallsCharacter::LockOnPressed()
 		lockOnTarget = NULL;
 		bIsLockOn = false;
 		_lookMultipler = 1;
-		bUseControllerRotationYaw = false;
+		//bUseControllerRotationYaw = false;
 	}
 }
 
