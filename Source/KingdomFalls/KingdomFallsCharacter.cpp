@@ -231,6 +231,7 @@ void AKingdomFallsCharacter::LockOnPressed()
 
 		if (isTargetDead(lockOnTarget))
 		{
+			lockOnTarget = NULL;
 			return;
 		}
 		bIsLockOn = true;
