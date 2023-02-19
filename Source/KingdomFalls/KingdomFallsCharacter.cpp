@@ -216,9 +216,9 @@ void AKingdomFallsCharacter::LockOnPressed()
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingleForObjects(
 		GetWorld(), 
-		actorLoc - (forwardVectorOfPlayerEye*1000.f), actorLoc + (forwardVectorOfPlayerEye * 2000.0f), 500.f,
-		ObjectTypesArray, false, ActorToIgnore, 
-		EDrawDebugTrace::ForDuration, OutHit, true,FLinearColor::Red,FLinearColor::Green,2);
+		actorLoc - (forwardVectorOfPlayerEye*150.0f), actorLoc + (forwardVectorOfPlayerEye * 2000.0f), 100.f,
+		ObjectTypesArray, true, ActorToIgnore, 
+		EDrawDebugTrace::None, OutHit, true,FLinearColor::Red,FLinearColor::Green,2);
 
 	UE_LOG(LogTemp, Warning, TEXT("Is Lock On?  %s"), bIsLockOn? TEXT("true") : TEXT("false"));
 	UE_LOG(LogTemp, Warning, TEXT("IsValideBlockingHit %s"), OutHit.IsValidBlockingHit() ? TEXT("true") : TEXT("false"));
