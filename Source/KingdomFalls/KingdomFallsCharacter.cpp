@@ -269,6 +269,7 @@ void AKingdomFallsCharacter::QuickTurnCamera(bool turn)
 
 void AKingdomFallsCharacter::TurnOffInputs()
 {
+
 	_lookMultipler = 0;
 	_moveMultipler = 0;
 }
